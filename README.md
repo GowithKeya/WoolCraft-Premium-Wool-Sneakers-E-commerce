@@ -148,9 +148,3 @@ The interface prioritizes:
 - **Smooth motion** with 300ms ease-out transitions
 - **WCAG-compliant** color contrast for accessibility
 - **Mobile-first** responsive design with touch-friendly interactions
-
----
-
-## 📝 License
-
-This project is part of a design portfolio. All product imagery and brand assets are fictional and created for demonstration purposes.
