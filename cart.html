@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - WoolCraft | Premium Wool Sneakers</title>
+    <meta name="description" content="Review your selected wool sneakers and complete your purchase. Free shipping on orders over $150.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Suisse+Int'l:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Canela:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'warm-white': '#FEFCF8',
+                        'oat': '#F5F1E8',
+                        'fog-gray': '#E8E5E0',
+                        'charcoal': '#2C2C2C',
+                        'sage': '#A8B5A0'
+                    },
+                    fontFamily: {
+                        'display': ['Canela', 'serif'],
+                        'body': ['Suisse Int\'l', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Suisse Int\'l', sans-serif;
+            background: linear-gradient(135deg, #FEFCF8 0%, #F5F1E8 100%);
+            color: #2C2C2C;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(254, 252, 248, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #A8B5A0;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #A8B5A0;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .cart-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #A8B5A0;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 8rem 0 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, #F5F1E8 0%, #E8E5E0 100%);
+        }
+        
+        .page-title {
+            font-family: 'Canela', serif;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #2C2C2C;
+        }
+        
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 4rem;
+        }
+        
+        /* Cart Items */
+        .cart-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-family: 'Canela', serif;
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+            color: #2C2C2C;
+        }
+        
+        .cart-items {
+            min-height: 200px;
+        }
+        
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #E8E5E0;
+            align-items: center;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cart-item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        .cart-item-details h4 {
+            font-family: 'Canela', serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #2C2C2C;
+        }
+        
+        .cart-item-details p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .cart-item-details .price {
+            font-weight: 600;
+            color: #A8B5A0;
+            font-size: 1rem;
+        }
+        
+        .cart-item-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #F5F1E8;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .quantity-controls button {
+            background: #A8B5A0;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .quantity-controls button:hover {
+            background: #96a388;
+            transform: scale(1.1);
+        }
+        
+        .quantity-controls span {
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .remove-item {
+            background: none;
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        
+        .remove-item:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        /* Empty Cart */
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        .empty-cart p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .continue-shopping-btn {
+            display: inline-block;
+            background: #A8B5A0;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .continue-shopping-btn:hover {
+            background: #96a388;
+            transform: translateY(-2px);
+        }
+        
+        /* Cart Summary */
+        .cart-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .summary-title {
+            font-family: 'Canela', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #2C2C2C;
+        }
+        
+        .cart-totals {
+            margin-bottom: 2rem;
+        }
+        
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .totals-row.total {
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-top: 1px solid #E8E5E0;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .promo-code {
+            margin-bottom: 2rem;
+        }
+        
+        .promo-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #E8E5E0;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .promo-input:focus {
+            outline: none;
+            border-color: #A8B5A0;
+        }
+        
+        .apply-promo-btn {
+            width: 100%;
+            background: #F5F1E8;
+            color: #666;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .apply-promo-btn:hover {
+            background: #A8B5A0;
+            color: white;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            background: #A8B5A0;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .checkout-btn:hover {
+            background: #96a388;
+            transform: translateY(-1px);
+        }
+        
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .trust-badges {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid #E8E5E0;
+        }
+        
+        .trust-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .trust-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #A8B5A0;
+        }
+        
+        /* Recommendations */
+        .recommendations {
+            margin-top: 4rem;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, #F5F1E8 0%, #E8E5E0 100%);
+        }
+        
+        .recommendations-title {
+            font-family: 'Canela', serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #2C2C2C;
+        }
+        
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .recommendation-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .recommendation-image {
+            aspect-ratio: 1;
+            overflow: hidden;
+        }
+        
+        .recommendation-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .recommendation-card:hover .recommendation-image img {
+            transform: scale(1.05);
+        }
+        
+        .recommendation-info {
+            padding: 1.5rem;
+        }
+        
+        .recommendation-name {
+            font-family: 'Canela', serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #2C2C2C;
+        }
+        
+        .recommendation-price {
+            font-weight: 600;
+            color: #A8B5A0;
+            margin-bottom: 1rem;
+        }
+        
+        .add-to-cart-small {
+            background: #A8B5A0;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .add-to-cart-small:hover {
+            background: #96a388;
+        }
+        
+        /* Success Message */
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .success-message.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background: #A8B5A0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .success-title {
+            font-family: 'Canela', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #2C2C2C;
+        }
+        
+        .success-text {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .success-btn {
+            background: #A8B5A0;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .success-btn:hover {
+            background: #96a388;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .cart-summary {
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2.5rem;
+            }
+            
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+                gap: 1rem;
+            }
+            
+            .cart-item-controls {
+                grid-column: 1 / -1;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-top: 1rem;
+            }
+            
+            .cart-item-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .recommendations-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-display font-medium text-charcoal">WoolCraft</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="nav-link text-charcoal hover:text-sage px-3 py-2 text-sm font-medium">Home</a>
+                        <a href="products.html" class="nav-link text-charcoal hover:text-sage px-3 py-2 text-sm font-medium">Products</a>
+                        <a href="index.html#story" class="nav-link text-charcoal hover:text-sage px-3 py-2 text-sm font-medium">Story</a>
+                        <a href="cart.html" class="nav-link text-sage px-3 py-2 text-sm font-medium relative">
+                            Cart
+                            <span class="cart-counter" style="display: none;">0</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button class="text-charcoal hover:text-sage">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container mx-auto px-4">
+            <h1 class="page-title">Shopping Cart</h1>
+            <p class="page-subtitle">Review your selected items and complete your purchase. Free shipping on orders over $150.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Cart Items -->
+        <section class="cart-section">
+            <h2 class="section-title">Your Items</h2>
+            <div class="cart-items">
+                <!-- Cart items will be dynamically loaded here -->
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cart Summary -->
+        <aside class="cart-summary">
+            <h2 class="summary-title">Order Summary</h2>
+            
+            <div class="cart-totals">
+                <!-- Totals will be dynamically calculated -->
+            </div>
+            
+            <div class="promo-code">
+                <input type="text" class="promo-input" placeholder="Enter promo code" id="promoCode">
+                <button class="apply-promo-btn" onclick="applyPromoCode()">Apply Code</button>
+            </div>
+            
+            <button class="checkout-btn" onclick="proceedToCheckout()" id="checkoutBtn">
+                Proceed to Checkout
+            </button>
+            
+            <div class="trust-badges">
+                <p class="trust-text">Secure checkout with SSL encryption</p>
+                <div class="trust-icons">
+                    <span>🔒 Secure</span>
+                    <span>🚚 Free Shipping</span>
+                    <span>↩️ Easy Returns</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Recommendations -->
+    <section class="recommendations">
+        <div class="container mx-auto px-4">
+            <h2 class="recommendations-title">You Might Also Like</h2>
+            <div class="recommendations-grid">
+                <!-- Recommendation 1 -->
+                <div class="recommendation-card">
+                    <div class="recommendation-image">
+                        <img src="resources/product-6.jpg" alt="Cashmere Luxe Sage">
+                    </div>
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-name">Cashmere Luxe - Sage</h3>
+                        <p class="recommendation-price">$285</p>
+                        <button class="add-to-cart-small" onclick="app.addToCart(6, 9)">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Recommendation 2 -->
+                <div class="recommendation-card">
+                    <div class="recommendation-image">
+                        <img src="resources/product-8.jpg" alt="Alpine Trail Stone">
+                    </div>
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-name">Alpine Trail - Stone</h3>
+                        <p class="recommendation-price">$195</p>
+                        <button class="add-to-cart-small" onclick="app.addToCart(8, 9)">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Recommendation 3 -->
+                <div class="recommendation-card">
+                    <div class="recommendation-image">
+                        <img src="resources/product-12.jpg" alt="Weekend Slip-On Clay">
+                    </div>
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-name">Weekend Slip-On - Clay</h3>
+                        <p class="recommendation-price">$145</p>
+                        <button class="add-to-cart-small" onclick="app.addToCart(12, 9)">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Recommendation 4 -->
+                <div class="recommendation-card">
+                    <div class="recommendation-image">
+                        <img src="resources/product-4.jpg" alt="Urban Runner Cream">
+                    </div>
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-name">Urban Runner - Cream</h3>
+                        <p class="recommendation-price">$185</p>
+                        <button class="add-to-cart-small" onclick="app.addToCart(4, 9)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-charcoal text-white py-8 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 WoolCraft. Crafted with care for people and planet.</p>
+        </div>
+    </footer>
+
+    <!-- Success Message Modal -->
+    <div class="success-message" id="successMessage">
+        <div class="success-icon">✓</div>
+        <h3 class="success-title">Order Placed Successfully!</h3>
+        <p class="success-text">Thank you for your purchase. You'll receive a confirmation email shortly.</p>
+        <button class="success-btn" onclick="closeSuccessMessage()">Continue Shopping</button>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="main.js"></script>
+    <script>
+        function applyPromoCode() {
+            const promoInput = document.getElementById('promoCode');
+            const promoCode = promoInput.value.trim().toUpperCase();
+            
+            // Simulate promo code validation
+            const validCodes = {
+                'WOOL10': 0.10,
+                'FREESHIP': 'free_shipping',
+                'SAVE20': 0.20
+            };
+            
+            if (validCodes[promoCode]) {
+                anime({
+                    targets: promoInput,
+                    scale: [1, 1.05, 1],
+                    duration: 300,
+                    complete: function() {
+                        promoInput.style.borderColor = '#A8B5A0';
+                        promoInput.style.backgroundColor = '#f0f8f0';
+                        
+                        // Update totals with promo discount
+                        app.renderCart();
+                        
+                        // Show success feedback
+                        const applyBtn = document.querySelector('.apply-promo-btn');
+                        applyBtn.textContent = 'Applied!';
+                        applyBtn.style.background = '#A8B5A0';
+                        applyBtn.style.color = 'white';
+                        
+                        setTimeout(() => {
+                            applyBtn.textContent = 'Apply Code';
+                            applyBtn.style.background = '';
+                            applyBtn.style.color = '';
+                        }, 2000);
+                    }
+                });
+            } else {
+                // Show error
+                anime({
+                    targets: promoInput,
+                    translateX: [-10, 10, -10, 10, 0],
+                    duration: 400,
+                    complete: function() {
+                        promoInput.style.borderColor = '#ff6b6b';
+                        promoInput.style.backgroundColor = '#ffe0e0';
+                        
+                        setTimeout(() => {
+                            promoInput.style.borderColor = '';
+                            promoInput.style.backgroundColor = '';
+                        }, 2000);
+                    }
+                });
+            }
+        }
+        
+        function proceedToCheckout() {
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const originalText = checkoutBtn.textContent;
+            
+            // Simulate checkout process
+            checkoutBtn.textContent = 'Processing...';
+            checkoutBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Show success message
+                const successMessage = document.getElementById('successMessage');
+                successMessage.classList.add('show');
+                
+                // Clear cart
+                app.clearCart();
+                
+                // Reset button
+                checkoutBtn.textContent = originalText;
+                checkoutBtn.disabled = false;
+                
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    closeSuccessMessage();
+                }, 5000);
+            }, 2000);
+        }
+        
+        function closeSuccessMessage() {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.remove('show');
+            
+            // Redirect to products page
+            setTimeout(() => {
+                window.location.href = 'products.html';
+            }, 300);
+        }
+        
+        // Promo code input enhancement
+        document.addEventListener('DOMContentLoaded', function() {
+            const promoInput = document.getElementById('promoCode');
+            
+            promoInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    applyPromoCode();
+                }
+            });
+            
+            // Auto-uppercase input
+            promoInput.addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(254, 252, 248, 0.98)';
+                navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            } else {
+                navbar.style.background = 'rgba(254, 252, 248, 0.95)';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

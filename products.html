@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - WoolCraft | Premium Wool Sneakers</title>
+    <meta name="description" content="Browse our complete collection of premium wool sneakers. Filter by wool type, color, size, and style to find your perfect pair.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Suisse+Int'l:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Canela:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'warm-white': '#FEFCF8',
+                        'oat': '#F5F1E8',
+                        'fog-gray': '#E8E5E0',
+                        'charcoal': '#2C2C2C',
+                        'sage': '#A8B5A0'
+                    },
+                    fontFamily: {
+                        'display': ['Canela', 'serif'],
+                        'body': ['Suisse Int\'l', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Suisse Int\'l', sans-serif;
+            background: linear-gradient(135deg, #FEFCF8 0%, #F5F1E8 100%);
+            color: #2C2C2C;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(254, 252, 248, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #A8B5A0;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #A8B5A0;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .cart-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #A8B5A0;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 8rem 0 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, #F5F1E8 0%, #E8E5E0 100%);
+        }
+        
+        .page-title {
+            font-family: 'Canela', serif;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #2C2C2C;
+        }
+        
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        /* Filters Sidebar */
+        .filters-sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .filters-title {
+            font-family: 'Canela', serif;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #2C2C2C;
+        }
+        
+        .filter-group {
+            margin-bottom: 2rem;
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
+            color: #2C2C2C;
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .filter-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #E8E5E0;
+            border-radius: 4px;
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-checkbox:checked {
+            background: #A8B5A0;
+            border-color: #A8B5A0;
+        }
+        
+        .filter-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .filter-text {
+            font-size: 0.9rem;
+            color: #555;
+            cursor: pointer;
+        }
+        
+        .price-range {
+            margin-top: 1rem;
+        }
+        
+        .price-slider {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: #E8E5E0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .price-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #A8B5A0;
+            cursor: pointer;
+        }
+        
+        .price-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .clear-filters {
+            background: none;
+            border: 1px solid #A8B5A0;
+            color: #A8B5A0;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .clear-filters:hover {
+            background: #A8B5A0;
+            color: white;
+        }
+        
+        /* Products Area */
+        .products-area {
+            min-height: 600px;
+        }
+        
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .results-counter {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #E8E5E0;
+            border-radius: 8px;
+            background: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #E8E5E0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-bar:focus {
+            outline: none;
+            border-color: #A8B5A0;
+        }
+        
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .product-card.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+            animation: slideUp 0.6s ease-out forwards;
+        }
+        
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .product-image {
+            position: relative;
+            aspect-ratio: 1;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(168, 181, 160, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .product-card:hover .product-overlay {
+            opacity: 1;
+        }
+        
+        .quick-view-btn {
+            background: white;
+            color: #A8B5A0;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-name {
+            font-family: 'Canela', serif;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #2C2C2C;
+        }
+        
+        .product-color {
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #A8B5A0;
+            margin-bottom: 1rem;
+        }
+        
+        .product-features {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-tag {
+            background: #F5F1E8;
+            color: #666;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        
+        .size-select {
+            padding: 0.5rem;
+            border: 1px solid #E8E5E0;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.85rem;
+            flex: 1;
+        }
+        
+        .add-to-cart-btn {
+            background: #A8B5A0;
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+        
+        .add-to-cart-btn:hover {
+            background: #96a388;
+            transform: translateY(-1px);
+        }
+        
+        /* Product Modal */
+        .product-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .product-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+        }
+        
+        .modal-content {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .product-modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #666;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .modal-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        
+        .modal-details h2 {
+            font-family: 'Canela', serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #2C2C2C;
+        }
+        
+        .modal-color {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-price {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #A8B5A0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-features {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .modal-size-select {
+            padding: 0.75rem;
+            border: 1px solid #E8E5E0;
+            border-radius: 8px;
+            background: white;
+            font-size: 1rem;
+        }
+        
+        .modal-add-to-cart {
+            background: #A8B5A0;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .modal-add-to-cart:hover {
+            background: #96a388;
+            transform: translateY(-1px);
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #E8E5E0;
+            border-top: 3px solid #A8B5A0;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .filters-sidebar {
+                position: static;
+            }
+            
+            .modal-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2.5rem;
+            }
+            
+            .products-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-display font-medium text-charcoal">WoolCraft</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="nav-link text-charcoal hover:text-sage px-3 py-2 text-sm font-medium">Home</a>
+                        <a href="products.html" class="nav-link text-sage px-3 py-2 text-sm font-medium">Products</a>
+                        <a href="index.html#story" class="nav-link text-charcoal hover:text-sage px-3 py-2 text-sm font-medium">Story</a>
+                        <a href="cart.html" class="nav-link text-charcoal hover:text-sage px-3 py-2 text-sm font-medium relative">
+                            Cart
+                            <span class="cart-counter" style="display: none;">0</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button class="text-charcoal hover:text-sage">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container mx-auto px-4">
+            <h1 class="page-title">Our Collection</h1>
+            <p class="page-subtitle">Discover the perfect blend of natural comfort and urban functionality in our carefully curated selection of premium wool sneakers.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Filters Sidebar -->
+        <aside class="filters-sidebar">
+            <h2 class="filters-title">Filters</h2>
+            
+            <!-- Search -->
+            <div class="filter-group">
+                <label class="filter-label">Search</label>
+                <input type="text" class="search-bar search-input" placeholder="Search products...">
+            </div>
+            
+            <!-- Wool Type Filter -->
+            <div class="filter-group">
+                <label class="filter-label">Wool Type</label>
+                <div class="filter-options">
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="woolType" value="Merino" id="merino">
+                        <label class="filter-text" for="merino">Merino Wool</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="woolType" value="Cashmere" id="cashmere">
+                        <label class="filter-text" for="cashmere">Cashmere</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="woolType" value="Alpaca" id="alpaca">
+                        <label class="filter-text" for="alpaca">Alpaca Wool</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Color Filter -->
+            <div class="filter-group">
+                <label class="filter-label">Color</label>
+                <div class="filter-options">
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="color" value="Oat" id="oat">
+                        <label class="filter-text" for="oat">Oat</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="color" value="Fog Gray" id="fog-gray">
+                        <label class="filter-text" for="fog-gray">Fog Gray</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="color" value="Charcoal" id="charcoal">
+                        <label class="filter-text" for="charcoal">Charcoal</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="color" value="Cream" id="cream">
+                        <label class="filter-text" for="cream">Cream</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="color" value="Taupe" id="taupe">
+                        <label class="filter-text" for="taupe">Taupe</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="color" value="Sage" id="sage">
+                        <label class="filter-text" for="sage">Sage</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Style Filter -->
+            <div class="filter-group">
+                <label class="filter-label">Style</label>
+                <div class="filter-options">
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="style" value="Casual" id="casual">
+                        <label class="filter-text" for="casual">Casual</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="style" value="Athletic" id="athletic">
+                        <label class="filter-text" for="athletic">Athletic</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-filter-type="style" value="Luxury" id="luxury">
+                        <label class="filter-text" for="luxury">Luxury</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Price Range -->
+            <div class="filter-group">
+                <label class="filter-label">Price Range</label>
+                <div class="price-range">
+                    <input type="range" class="price-slider price-range-slider" min="0" max="300" value="300" step="10">
+                    <div class="price-display">
+                        <span>$0</span>
+                        <span class="max-price">$300</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Clear Filters -->
+            <button class="clear-filters" onclick="app.clearAllFilters()">Clear All Filters</button>
+        </aside>
+
+        <!-- Products Area -->
+        <main class="products-area">
+            <!-- Products Header -->
+            <div class="products-header">
+                <p class="results-counter">12 products found</p>
+                <select class="sort-select" onchange="handleSort(this.value)">
+                    <option value="name">Sort by Name</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="newest">Newest First</option>
+                </select>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid">
+                <!-- Products will be dynamically loaded here -->
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-charcoal text-white py-8 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 WoolCraft. Crafted with care for people and planet.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="main.js"></script>
+    <script>
+        function handleSort(sortBy) {
+            // Handle product sorting
+            console.log('Sorting by:', sortBy);
+            // This would be implemented in the main.js file
+        }
+
+        // Update max price display when price slider changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceSlider = document.querySelector('.price-range-slider');
+            const maxPriceDisplay = document.querySelector('.max-price');
+            
+            if (priceSlider && maxPriceDisplay) {
+                priceSlider.addEventListener('input', function() {
+                    maxPriceDisplay.textContent = '$' + this.value;
+                });
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(254, 252, 248, 0.98)';
+                navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            } else {
+                navbar.style.background = 'rgba(254, 252, 248, 0.95)';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
